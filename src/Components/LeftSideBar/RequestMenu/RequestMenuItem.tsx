@@ -9,12 +9,12 @@ type ComponentProps = {
 const Component = styled.div<ComponentProps>`
     display: flex;
     background-color: ${p => !p.active ? "darkgrey" : "lightgrey"};
+    height: 2.4em;
 `;
 
 const URL = styled.h3`
     text-align: left;
     width: 60%;
-    /* color: white; */
     margin: auto;
     border-right: thin solid white;
     padding: 0.5em 0;
@@ -25,7 +25,7 @@ const URL = styled.h3`
     overflow: hidden;
 `;
 
-const Type = styled.h2`
+const Type = styled.h3`
     text-align: center;
     width: 33%;
     /* color: white; */
@@ -35,6 +35,7 @@ const Type = styled.h2`
     /* Required for text-overflow to do anything */
     white-space: nowrap;
     overflow: hidden;
+    font-size: 1.3em;
 `;
 
 type IconProps = {
