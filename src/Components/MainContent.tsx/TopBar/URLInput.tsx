@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import styled from 'styled-components';
 import TopBar from './TopBar';
 import { AppContext } from '../../../Context/AppContext';
+import { MainContentContext } from '../../../Context/MainContentContext';
 
 
 const Component = styled.input`
@@ -17,12 +18,9 @@ const Component = styled.input`
 
 `;
 
-type Props = {
-    url: string
-}
-
-function URLInput(props: Props) {
+function URLInput() {
     const c = useContext(AppContext);
+    const cMainContent = useContext(MainContentContext);
 
     const updateURL = (e: React.ChangeEvent<HTMLInputElement>) => {
         c.folders = c.folders.map(ele => {
@@ -36,7 +34,7 @@ function URLInput(props: Props) {
     }
 
     return (
-        <Component value = {props.url} onChange = {updateURL} />
+        <Component value = {cMainContent.activeRequest.url} onChange = {updateURL} />
     )
 }
 

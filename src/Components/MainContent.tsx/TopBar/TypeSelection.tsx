@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import styled from 'styled-components';
 import TopBar from './TopBar';
 import { AppContext } from '../../../Context/AppContext';
+import { MainContentContext } from '../../../Context/MainContentContext';
 
 const Select = styled.select`
     width: 10rem;
@@ -26,12 +27,9 @@ const Select = styled.select`
 const Option = styled.option`
 `;
 
-type Props = {
-    type: string
-}
-
-function TypeSelection(props: Props) {
+function TypeSelection() {
     const c = useContext(AppContext);
+    const cMainContent = useContext(MainContentContext);
 
     const updateTypeSelection = (e: React.ChangeEvent<HTMLSelectElement>) => {
         c.folders = c.folders.map(ele => {
@@ -47,7 +45,7 @@ function TypeSelection(props: Props) {
     }
     
     return (
-        <Select value = {props.type} onChange={updateTypeSelection}>
+        <Select value = {cMainContent.activeRequest.type} onChange={updateTypeSelection}>
             <Option value="GET">GET</Option>
             <Option value="POST">POST</Option>
             <Option value="PUT">PUT</Option>

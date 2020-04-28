@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import TypeSelection from './TypeSelection';
 import URLInput from './URLInput';
 import { AppContext } from '../../../Context/AppContext';
+import { MainContentContext } from '../../../Context/MainContentContext';
 
 const Component = styled.div`
     width: 100%;
@@ -34,31 +35,14 @@ const SendRequestText = styled.p`
     
 `;
 
-type Props = {
-}
-
-function TopBar(props: Props) {
-    const c = useContext(AppContext);
-    const [activeRequestValues, setActiveRequestValues] = useState({url: "", type: ""})
-    useEffect(() => {
-        //checking for active request
-        if (!!(c.folders.find(ele => ele.requests.find(ele => ele.active)))) {
-            c.folders.find(ele => {
-                ele.requests.find(eleR => {
-                    if (eleR.active) setActiveRequestValues({url: eleR.url, type: eleR.type});
-                });
-            });
-        } else {
-            setActiveRequestValues({url: "please select or create a request", type: "GET"})
-        }
-        
-    }, [c.folders])
+function TopBar() {
+    const c = useContext(MainContentContext);
 
     return (
         <Component>
-            <TypeSelection type = {activeRequestValues.type} />
-            <URLInput url = {activeRequestValues.url}/>
-            <SendRequest><SendRequestText>Send</SendRequestText></SendRequest>
+            <TypeSelection />
+            <URLInput />
+            <SendRequest onClick = {c.sendRequest}><SendRequestText>Send</SendRequestText></SendRequest>
         </Component>
     )
 }

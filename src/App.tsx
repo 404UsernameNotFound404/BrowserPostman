@@ -24,36 +24,36 @@ function App() {
         id: 0,
         url: "localhost:3000/penis",
         type: "POST",
-        body: {
+        body: `{
           size: "10km"
-        },
-        headers: {
+        }`,
+        headers: `{
           authorization: "JWT POO POO PEE PEE LET ME IN"
-        },
+        }`,
         active: true
       },
       {
         id: 1,
         url: "localhost:3000/dick",
         type: "GET",
-        body: {
+        body: `{
           size: "15km"
-        },
-        headers: {
+        }`,
+        headers: `{
           authorization: "JWT POO POO PEE PEE LET ME IN"
-        },
+        }`,
         active: false
       },
       {
         id: 2,
         url: "localhost:3000/dick",
         type: "GET",
-        body: {
+        body: `{
           size: "15km"
-        },
-        headers: {
+        }`,
+        headers: `{
           authorization: "JWT POO POO PEE PEE LET ME IN"
-        },
+        }`,
         active: false
       }
     ],
@@ -69,7 +69,6 @@ function App() {
         studentID: "string"
       }
   }]);
-  
   return (
     <div>
       <AppContext.Provider value={{ folders: folders, setFolders: setFolders, models: models, setModels: setModels }}>
