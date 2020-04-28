@@ -7,7 +7,7 @@ import { MainContentContext } from '../../Context/MainContentContext';
 import Result from './Result';
 
 const Component = styled.div`
-    width: 77.5%;
+    width: 70%;
     height: 100%;
 `;
 
@@ -18,6 +18,7 @@ type Props = {
 function MainContent(props: Props) {
     const c = useContext(AppContext);
     const [activeRequestValues, setActiveRequestValues] = useState({ url: "", type: "", body: {}, headers: {} });
+    const [reqResult, setReqResult] = useState({});
 
     useEffect(() => {
         //checking for active request
@@ -47,6 +48,7 @@ function MainContent(props: Props) {
             const resRaw = await fetch(activeRequestValues.url, options)
             let res = await resRaw.json();
             console.log(res)
+            setReqResult(res);
         } catch (err) {
             console.log("errr")
             console.log(err);
@@ -58,7 +60,7 @@ function MainContent(props: Props) {
             <MainContentContext.Provider value={{ activeRequest: activeRequestValues, sendRequest: sendRequest }}>
                 <TopBar />
                 <BodyAndHeadersInput />
-                <Result result={{ hello: "test" }} />
+                <Result result={reqResult} />
             </MainContentContext.Provider>
         </Component>
     )

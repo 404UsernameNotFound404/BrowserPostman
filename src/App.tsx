@@ -1,13 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { AppContext } from './Context/AppContext';
 import { useState } from 'react';
 import LeftSideBar from './Components/LeftSideBar/LeftSideBar';
 import MainContent from './Components/MainContent.tsx/MainContent';
+import Cookie from 'js-cookie'
 
 const AppStyle = styled.div`
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
+  height: fit-content;
   background-color: #232323;
   display: flex;
   -webkit-user-select: none; /* Safari */        
@@ -22,39 +24,13 @@ function App() {
     requests: [
       {
         id: 0,
-        url: "http://localhost:4000/organization/",
+        url: "http://localhost:3000/",
         type: "GET",
         body: {
-          test: "hello"
         },
         headers: {
-          test: "hello"
         },
         active: true
-      },
-      {
-        id: 1,
-        url: "localhost:3000/dick",
-        type: "GET",
-        body: {
-          test: "hello"
-        },
-        headers: {
-          test: "hello"
-        },
-        active: false
-      },
-      {
-        id: 2,
-        url: "localhost:3000/dick",
-        type: "GET",
-        body: {
-          test: "hello"
-        },
-        headers: {
-          test: "hello"
-        },
-        active: false
       }
     ],
     open: true,
@@ -68,7 +44,44 @@ function App() {
         name: "string",
         studentID: "string"
       }
-  }]);
+    }]);
+
+  const [shouldUpdate, setShouldUpdate] = useState(false);
+
+  useEffect(() => {
+    let cookieFolders = Cookie.get("folders");
+    let cookieModels = Cookie.get("models");
+
+    if (!!cookieFolders) setFolders(JSON.parse(cookieFolders));
+    if (!!cookieModels) setModels(JSON.parse(cookieModels));
+
+    //starts update cycle
+    setShouldUpdate(true);
+    updateFolders();
+  }, []);
+
+  useEffect(() => {
+    //updates immediately when change is made, but when another change is made within 1 seconds
+    //it waits till end of 1 seconds to incorporate change. Then that cycle will repeat
+    updateFolders();
+  }, [folders])
+
+  const updateFolders = () => {
+    if (shouldUpdate) {
+      setShouldUpdate(false);
+      setTimeout(() => {
+        setShouldUpdate(true);
+        Cookie.set('folders', JSON.stringify(getNewFolders()));
+      }, 1000)
+      Cookie.set('folders', JSON.stringify(folders));
+    }
+  }
+
+  //this is because in react a passed in function takes the state at the time it passed in. And I want updated state
+  const getNewFolders = () => {
+    return folders;
+  }
+
   return (
     <div>
       <AppContext.Provider value={{ folders: folders, setFolders: setFolders, models: models, setModels: setModels }}>

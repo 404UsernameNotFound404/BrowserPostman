@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import ReactJson from 'react-json-view';
 
 const Component = styled.div`
     width: 80%;
@@ -18,6 +19,15 @@ const ResultValue = styled.div`
 
 const Value = styled.h2`
     color: white;
+    width: 100%;
+`;
+
+const Pre = styled.pre`
+    white-space: pre-wrap;       /* css-3 */
+ white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+ white-space: -pre-wrap;      /* Opera 4-6 */
+ white-space: -o-pre-wrap;    /* Opera 7 */
+ word-wrap: break-word;       /* Internet Explorer 5.5+ */
 `;
 
 type Props = {
@@ -28,11 +38,12 @@ function Result(props: Props) {
     return (
         <Component>
             <Title>Result</Title>
-            <ResultValue>
+            {/* <ResultValue>
                 <Value>
-                    <pre>{JSON.stringify(props.result, null, 2)}</pre>
+                    <Pre>{JSON.stringify(props.result, null, 2)}</Pre>
                 </Value>
-            </ResultValue>
+            </ResultValue> */}
+            <ReactJson style = {{fontSize: "1.5em"}} theme = {"monokai"} src={props.result} />
         </Component>
     )
 }

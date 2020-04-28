@@ -69,7 +69,13 @@ function RequestFolder(props: Props) {
                 //if there are any requests it will copy last requests setting expect body
                 if (ele.requests.length >= 1) {
                     //checks if url has slash. If so it will take everything before slash. If not it will take whole url previously used
-                    url = ele.requests[ele.requests.length - 1].url.indexOf("/") == -1 ? ele.requests[ele.requests.length - 1].url : ele.requests[ele.requests.length - 1].url.substring(0, ele.requests[ele.requests.length - 1].url.indexOf("/"));
+                    if (ele.requests[ele.requests.length - 1].url.substring(0, 7) == "http://" || ele.requests[ele.requests.length - 1].url.substring(0, 8) == "https://") {
+                        let startPointOfUrl = ele.requests[ele.requests.length - 1].url.substring(0, 7) == "http://" ? 7 : 8;
+                        let urlWithoutHTTP = ele.requests[ele.requests.length - 1].url.substring(startPointOfUrl, ele.requests[ele.requests.length - 1].url.length - 1);
+                        url = urlWithoutHTTP.indexOf("/") == -1 ? ele.requests[ele.requests.length - 1].url : ((startPointOfUrl == 7 ? "http://" : "https://") + urlWithoutHTTP.substring(0, urlWithoutHTTP.indexOf("/")));
+                    } else {
+                        url = ele.requests[ele.requests.length - 1].url.indexOf("/") == -1 ? ele.requests[ele.requests.length - 1].url : ele.requests[ele.requests.length - 1].url.substring(0, ele.requests[ele.requests.length - 1].url.indexOf("/"));
+                    }
                     type = ele.requests[ele.requests.length - 1].type;
                     headers = ele.requests[ele.requests.length - 1].headers;
                 }
