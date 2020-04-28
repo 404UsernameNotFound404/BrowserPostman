@@ -20,12 +20,12 @@ function BodyAndHeadersInput(props: Props) {
     const c = useContext(MainContentContext);
     const cApp = useContext(AppContext);
 
-    const updateBodyOrHeaders = (isBody: boolean, e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const updateBodyOrHeaders = (isBody: boolean, newValue: any) => {
         cApp.folders = cApp.folders.map(ele => {
             ele.requests = ele.requests.map(eleR => {
                 if (eleR.active) {
-                    if (isBody) return { ...eleR, body: e.target.value };
-                    else return { ...eleR, headers: e.target.value };
+                    if (isBody) return { ...eleR, body: newValue };
+                    else return { ...eleR, headers: newValue };
                 }
                 return eleR;
             })
@@ -34,48 +34,16 @@ function BodyAndHeadersInput(props: Props) {
         cApp.setFolders(cApp.folders);
     }
 
-    const updateBodyOrHeadersKeycode = (isBody: boolean, e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-        e.preventDefault();
-        console.log(e.keyCode)
+    const addNewProperty = (isBody: boolean) => {
         cApp.folders = cApp.folders.map(ele => {
             ele.requests = ele.requests.map(eleR => {
-                let char = String.fromCharCode(e.keyCode);
                 if (eleR.active) {
-                    switch(e.keyCode) {
-                        case 9: 
-                            char = (eleR.body += "    ");
-                        break;
-                        case 8:
-                            console.log(isBody)
-                            if (isBody) return {...eleR, body: eleR.body.substring(0, eleR.body.length - 1)};
-                            else return {...eleR, headers: eleR.headers.substring(0, eleR.headers.length - 1)};
-                        break;
-                        case 16:
-                            setShift(true);
-                            return eleR;
-                        case 219:
-                            char = shift ? "{" : "[";
-                        break;
-                        case 221:
-                            char = shift ? "}" : "]";
-                            break;
-                        break;
-                        case 222:
-                            char = shift ? '"' : "'";
-                            break;
-                        case 59:
-                            char = shift ? ':' : ";";
-                            break;
-                        default:
-                            char = String.fromCharCode(e.keyCode);
-                            if (!shift) {
-                                char = char.toLowerCase();
-                            } else {
-                                char = char.toUpperCase();
-                            }
-                    }
-                    if (isBody) return {...eleR, body: eleR.body += char};
-                    else return {...eleR, headers: eleR.headers += char}
+                    //this can cause bug by not creating new if there is already a key property
+                    let oldObjWithNew = isBody ? ({...eleR.body, key: "value"}) : ({...eleR.headers, key: "value"});
+                    if (isBody && eleR.body.key != undefined) oldObjWithNew["key" + Math.floor(Math.random() * 100)] = "value";
+                    if (!isBody && eleR.headers.key != undefined) oldObjWithNew["key" + Math.floor(Math.random() * 100)] = "value";
+                    if (isBody) return { ...eleR, body: oldObjWithNew };
+                    else return { ...eleR, headers: oldObjWithNew };
                 }
                 return eleR;
             })
@@ -84,17 +52,27 @@ function BodyAndHeadersInput(props: Props) {
         cApp.setFolders(cApp.folders);
     }
 
-    const checkKeyUp = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-        e.preventDefault();
-        if (e.keyCode == 16) {
-            setShift(false);
-        }
+    const deleteProperty = (isBody: boolean, keyToDel: string) => {
+        cApp.folders = cApp.folders.map(ele => {
+            ele.requests = ele.requests.map(eleR => {
+                if (eleR.active) {
+                    //this can cause bug by not creating new if there is already a key property
+                    let oldObjWithNew = isBody ? ({...eleR.body}) : ({...eleR.headers});
+                    delete oldObjWithNew[keyToDel];
+                    if (isBody) return { ...eleR, body: oldObjWithNew };
+                    else return { ...eleR, headers: oldObjWithNew };
+                }
+                return eleR;
+            })
+            return ele;
+        })
+        cApp.setFolders(cApp.folders);
     }
 
     return (
         <Component>
-            <BodyOrHeaderInput checkKeyUp = {checkKeyUp} updateBodyOrHeadersKeycode={updateBodyOrHeadersKeycode} updateBodyOrHeaders={updateBodyOrHeaders} value={c.activeRequest.body} isBodyInput={true} />
-            <BodyOrHeaderInput checkKeyUp = {checkKeyUp} updateBodyOrHeadersKeycode={updateBodyOrHeadersKeycode} updateBodyOrHeaders={updateBodyOrHeaders} value={c.activeRequest.headers} isBodyInput={false} />
+            <BodyOrHeaderInput deleteProperty = {deleteProperty} addNewProperty = {addNewProperty} updateBodyOrHeaders = {updateBodyOrHeaders} value={c.activeRequest.body} isBodyInput={true} />
+            <BodyOrHeaderInput deleteProperty = {deleteProperty} addNewProperty = {addNewProperty} updateBodyOrHeaders = {updateBodyOrHeaders} value={c.activeRequest.headers} isBodyInput={false} />
         </Component>
     )
 }

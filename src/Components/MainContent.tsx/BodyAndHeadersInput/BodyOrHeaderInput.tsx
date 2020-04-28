@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
+import JSONInput from '../../Library/JSONInput/JSONInput';
+import { AppContext } from '../../../Context/AppContext';
 
 const Component = styled.div`
     width: 45%;
@@ -11,31 +13,35 @@ const Title = styled.h2`
     font-size: 1.75em;
 `;
 
-const Input = styled.textarea`
-    width: 100%;
-    height: 10em;
-    color: white;
-    background-color: transparent;
-    border: thin solid grey;
-    resize: none;
-    padding: 0.25rem;
-    font-size: 1.25em;
-`;
-
 type Props = {
     isBodyInput: boolean,
-    value: string,
+    value: object,
     updateBodyOrHeaders: Function,
-    updateBodyOrHeadersKeycode: any,
-    checkKeyUp: any
+    addNewProperty: Function,
+    deleteProperty: Function
 }
 
 function BodyOrHeaderInput(props: Props) {
+    const c = useContext(AppContext);
     const {isBodyInput, value} = props;
+
+    const editBody = (newValue: any) => {
+        // console.log(newValue);
+        props.updateBodyOrHeaders(isBodyInput, newValue);
+    }
+
+    const addNewProperty = () => {
+        props.addNewProperty(props.isBodyInput);
+    }
+
+    const deleteProperty = (keyToDel: string) => {
+        props.deleteProperty(isBodyInput, keyToDel);
+    }
+
     return (
         <Component>
             <Title>{isBodyInput ? "Body" : "Headers"}</Title>
-            <Input onKeyUp = {props.checkKeyUp} onKeyDown = {(e: React.KeyboardEvent<HTMLTextAreaElement>) => {props.updateBodyOrHeadersKeycode(props.isBodyInput, e)}}  onChange = {(e: React.ChangeEvent<HTMLTextAreaElement>) => {e.preventDefault(); props.updateBodyOrHeaders(props.isBodyInput, e)}} value = {value} />
+            <JSONInput deleteProperty = {deleteProperty} addNewProperty = {addNewProperty} data = {value} edit = {editBody} />
         </Component>
     )
 }

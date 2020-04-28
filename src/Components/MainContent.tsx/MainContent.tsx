@@ -17,7 +17,7 @@ type Props = {
 
 function MainContent(props: Props) {
     const c = useContext(AppContext);
-    const [activeRequestValues, setActiveRequestValues] = useState({ url: "", type: "", body: "", headers: "" });
+    const [activeRequestValues, setActiveRequestValues] = useState({ url: "", type: "", body: {}, headers: {} });
 
     useEffect(() => {
         //checking for active request
@@ -34,12 +34,17 @@ function MainContent(props: Props) {
 
     const sendRequest = async () => {
         try {
-            console.log(JSON.parse(activeRequestValues.headers))
-            const resRaw = await fetch(activeRequestValues.url, {
+            let options = {
                 method: activeRequestValues.type,
-                headers: JSON.parse(activeRequestValues.headers),
-                body: JSON.parse(JSON.stringify(activeRequestValues.body)),
-            })
+                headers: activeRequestValues.headers,
+                body: JSON.stringify(activeRequestValues.body),
+            }
+            if (activeRequestValues.type.toLowerCase() == "get") {
+                delete options.body;
+            }
+            console.log(activeRequestValues)
+            console.log(options)
+            const resRaw = await fetch(activeRequestValues.url, options)
             let res = await resRaw.json();
             console.log(res)
         } catch (err) {

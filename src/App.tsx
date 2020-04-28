@@ -22,38 +22,38 @@ function App() {
     requests: [
       {
         id: 0,
-        url: "localhost:3000/penis",
-        type: "POST",
-        body: `{
-          size: "10km"
-        }`,
-        headers: `{
-          authorization: "JWT POO POO PEE PEE LET ME IN"
-        }`,
+        url: "http://localhost:4000/organization/",
+        type: "GET",
+        body: {
+          test: "hello"
+        },
+        headers: {
+          test: "hello"
+        },
         active: true
       },
       {
         id: 1,
         url: "localhost:3000/dick",
         type: "GET",
-        body: `{
-          size: "15km"
-        }`,
-        headers: `{
-          authorization: "JWT POO POO PEE PEE LET ME IN"
-        }`,
+        body: {
+          test: "hello"
+        },
+        headers: {
+          test: "hello"
+        },
         active: false
       },
       {
         id: 2,
         url: "localhost:3000/dick",
         type: "GET",
-        body: `{
-          size: "15km"
-        }`,
-        headers: `{
-          authorization: "JWT POO POO PEE PEE LET ME IN"
-        }`,
+        body: {
+          test: "hello"
+        },
+        headers: {
+          test: "hello"
+        },
         active: false
       }
     ],
