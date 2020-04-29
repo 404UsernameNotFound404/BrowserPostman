@@ -9,6 +9,7 @@ const Component = styled.div`
     height: 3em;
     width: 100%;
     justify-content: space-between;
+    outline: thin solid white;
 `;
 
 const Name = styled.h4`
@@ -71,8 +72,10 @@ const WhiteLine = styled.div`
 
 type Props = {
     name: string,
-    delete: Function,
-    copy: Function
+    deleteFunc: Function,
+    copy: Function,
+    edit: Function,
+    addModelToBodyOrHeader: Function
 }
 
 function Model(props: Props) {
@@ -82,13 +85,13 @@ function Model(props: Props) {
             <Name>{props.name}</Name>
             <WhiteLine />
             <EditContainer>
-                <EditText>Edit</EditText>
-                <EditText>Del</EditText>
+                <EditText onClick = {() => {props.edit(props.name)}}>Edit</EditText>
+                <EditText onClick = {() => {props.deleteFunc(props.name)}}>Del</EditText>
             </EditContainer>
             <WhiteLine />
             <CopyContainer>
-                <CopyText backColor={"blue"}>Body</CopyText>
-                <CopyText backColor={"red"}>Headers</CopyText>
+                <CopyText onClick = {() => {props.addModelToBodyOrHeader(true, props.name)}} backColor={"blue"}>Body</CopyText>
+                <CopyText onClick = {() => {props.addModelToBodyOrHeader(false, props.name)}} backColor={"red"}>Headers</CopyText>
             </CopyContainer>
         </Component>
     )

@@ -1,9 +1,14 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
 import { AppContext } from '../../../Context/AppContext';
 import Model from './Model';
+import ContactModal from '../../Library/ContactModal';
+import JSONInput from '../../Library/JSONInput/JSONInput';
 
 const Component = styled.div`
+    width: 100%;
+    height: 49%;
+    overflow-y: auto;
 `;
 
 const Title = styled.h1`
@@ -12,6 +17,16 @@ const Title = styled.h1`
     font-size: 1.75em;
     color: white;
     text-decoration: underline;
+    margin-bottom: 0.5em;
+`;
+
+const ModelTitleInput = styled.input`
+    background-color: transparent;
+    border: none;
+    text-align: center;
+    width: 100%;
+    font-size: 1.75em;
+    color: white;
     margin-bottom: 0.5em;
 `;
 
@@ -37,26 +52,109 @@ type Props = {
 }
 
 function ModelMenu(props: Props) {
+    const [modalOpen, setModalOpen] = useState(false);
+    const [activeModel, setActiveModel] = useState(null as any);
     const c = useContext(AppContext);
 
-    const deleteModel = () => {
-
+    const addModelToBodyOrHeader = (copyToBody: boolean, modelName: string) => {
+        c.folders = c.folders.map(ele => {
+            ele.requests = ele.requests.map(eleR => {
+                if (eleR.active) {
+                    let modelToCopy = c.models.find(ele => ele.name == modelName);
+                    if (copyToBody) return {...eleR, body: modelToCopy?.attributes}
+                    else return {...eleR, headers: modelToCopy?.attributes}
+                }
+                return eleR;
+            })
+            return ele;
+        })
+        c.setFolders(c.folders);
     }
 
-    const addModelToBodyOrHeader = () => {
-        
+    const deleteModel = (name: string) => {
+        c.models = c.models.filter(ele => !(ele.name == name))
+        c.setModels(c.models);
+    }
+
+    const editModel = (name: string) => {
+        setActiveModel(c.models.find(ele => ele.name == name));
+        setModalOpen(true);
+    }
+
+    const editModelTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
+        //double check for dupes
+        c.models = c.models.map(ele => {
+            if (ele.name == activeModel.name) {
+                let newName = e.target.value;
+                let newNameCount = 1;
+                while(!!(c.models.find(ele => ele.name == newName))) {
+                    newName = "name" + "(" + newNameCount + ")";
+                    newNameCount++;
+                }
+                ele.name = newName;
+            }
+            return ele;
+        })
+        c.setModels(c.models);
+        setActiveModel({ ...activeModel, name: e.target.value });
+    }
+
+    const addNewPropertyOnModel = () => {
+        c.models = c.models.map(ele => {
+            if (ele.name == activeModel.name) {
+                console.log("trying to add")
+                if (ele.attributes.key != undefined) ele.attributes.key = "value";
+                else ele.attributes["key" + Math.floor(Math.random() * 100)] = "value";
+            }
+            return ele;
+        })
+        c.setModels(c.models);
+    }
+
+    const deletePropertyOnModel = (propertyToDelete: string) => {
+        c.models = c.models.map(ele => {
+            if (ele.name == activeModel.name) {
+                delete ele.attributes[propertyToDelete];
+            }
+            return ele;
+        })
+        c.setModels(c.models);
+    }
+
+    const addModel = () => {
+        //check
+        let newModel = {
+            name: "name",
+            attributes: {}
+        };
+        let newNameCount = 1;
+        while(!!(c.models.find(ele => ele.name == newModel.name))) {
+            newModel.name = "name" + "(" + newNameCount + ")";
+            newNameCount++;
+        }
+        c.models = [...c.models, newModel];
+        c.setModels(c.models);
     }
 
     return (
         <Component>
             <Title>Model Menu</Title>
             {
-                c.models.map(ele => <Model name = {ele.name} delete = {deleteModel} copy = {addModelToBodyOrHeader} />)
+                c.models.map(ele => <Model addModelToBodyOrHeader = {addModelToBodyOrHeader} edit={editModel} name={ele.name} deleteFunc={deleteModel} copy={addModelToBodyOrHeader} />)
             }
-            <Icon color = {"green"}>+</Icon>
-            {
-                
-            }
+            <Icon onClick = {addModel} color={"green"}>+</Icon>
+            <ContactModal darkTheme={true} close={modalOpen} setClose={setModalOpen}>
+                {
+                    activeModel != null ?
+                        <>
+                            <div style={{ height: "1em" }} />    {/* spacer */}
+                            <ModelTitleInput value={activeModel.name} onChange={editModelTitle} />
+                            <JSONInput data={activeModel.attributes} edit={editModel} addNewProperty={addNewPropertyOnModel} deleteProperty={deletePropertyOnModel} />
+                            <div style={{ height: "1em" }} />    {/* spacer */}
+                        </>
+                        : ""
+                }
+            </ContactModal>
         </Component>
     )
 }

@@ -45,8 +45,9 @@ function App() {
         studentID: "string"
       }
     }]);
+  const [shouldUpdateFolders, setShouldUpdateFolders] = useState(false);
+  const [shouldUpdateModels, setShouldUpdateModels] = useState(false);
 
-  const [shouldUpdate, setShouldUpdate] = useState(false);
 
   useEffect(() => {
     let cookieFolders = Cookie.get("folders");
@@ -56,7 +57,9 @@ function App() {
     if (!!cookieModels) setModels(JSON.parse(cookieModels));
 
     //starts update cycle
-    setShouldUpdate(true);
+    setShouldUpdateFolders(true);
+    setShouldUpdateModels(true);
+    updateModels();
     updateFolders();
   }, []);
 
@@ -66,21 +69,36 @@ function App() {
     updateFolders();
   }, [folders])
 
+  useEffect(() => {
+    //same as for folders
+    updateModels();
+  }, [models])
+
   const updateFolders = () => {
-    if (shouldUpdate) {
-      setShouldUpdate(false);
+    if (shouldUpdateFolders) {
+      setShouldUpdateFolders(false);
       setTimeout(() => {
-        setShouldUpdate(true);
+        setShouldUpdateFolders(true);
         Cookie.set('folders', JSON.stringify(getNewFolders()));
       }, 1000)
       Cookie.set('folders', JSON.stringify(folders));
     }
   }
 
-  //this is because in react a passed in function takes the state at the time it passed in. And I want updated state
-  const getNewFolders = () => {
-    return folders;
+  const updateModels = () => {
+    if (shouldUpdateModels) {
+      setShouldUpdateFolders(false);
+      setTimeout(() => {
+        setShouldUpdateModels(true);
+        Cookie.set('models', JSON.stringify(getNewModels()));
+      }, 1000)
+      Cookie.set('models', JSON.stringify(models));
+    }
   }
+
+  //this is because in react a passed in function takes the state at the time it passed in. And I want updated state
+  const getNewFolders = () => folders;
+  const getNewModels = () => models;
 
   return (
     <div>

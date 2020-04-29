@@ -19,10 +19,7 @@ export const AppContext = createContext({
     models: [
         {
             name: "Student",
-            attributes: {
-                name: "string",
-                studentID: "string"
-            }
+            attributes: {} as any,
         }
     ],
     setModels: undefined as any

@@ -1,7 +1,5 @@
 import React, { ReactNode, useContext } from 'react'
 import styled from 'styled-components';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
 const Component = styled.div`
     left: 0;
@@ -16,29 +14,35 @@ const Component = styled.div`
 `;
 
 type ContentProps = {
-    width: string
+    width: string,
+    darkTheme: boolean
 }
 
 const Content = styled.div<ContentProps>`
     width: ${p => p.width};
-    background-color: white;
+    background-color: ${p => p.darkTheme ? "#232323" : "white"};
+    min-height: 10rem;
     height: fit-content;
     margin: auto;
     border-radius: 1.5rem;
-    border: 0.15em solid rgb(125,125,125);
+    border: 0.15em solid ${p => p.darkTheme ? "rgb(125,125,125)" : "rgb(125,125,125)"};
     position: relative;
 `;
 
-const CloseIcon = styled.h4`
+type CloseIconProps = {
+    darkTheme: boolean
+}
+
+const CloseIcon = styled.h4<CloseIconProps>`
     font-size: 1.5em;
     position: absolute;
     right: 0.5em;
     top: 0.5em;
     margin: 0;
-    color: grey;
+    color: ${p => p.darkTheme ? "white" : "black"};
     cursor: pointer;
     &:hover {
-        color: black;
+        color: ${p => p.darkTheme ? "grey" : "grey"};;
     }
 `;
 
@@ -46,17 +50,18 @@ type Props = {
     close: boolean,
     setClose: React.Dispatch<React.SetStateAction<boolean>>,
     children: ReactNode[] | ReactNode,
-    width?: string
+    width?: string,
+    darkTheme?: boolean
 }
 
 function ContactModal(props: Props) {
-    const closeIcon = <FontAwesomeIcon icon={faTimes} />
     const width = props.width ? props.width : "40em";
+    const darkTheme = props.darkTheme ? props.darkTheme : false;
     if (props.close) {
     return (
         <Component>
-            <Content width = {width}>
-                <CloseIcon onClick = {() => {console.log("here"); props.setClose(false)}}>{closeIcon}</CloseIcon>
+            <Content darkTheme = {darkTheme} width = {width}>
+                <CloseIcon darkTheme = {darkTheme} onClick = {() => {props.setClose(false)}}>X</CloseIcon>
                 {props.children}
             </Content>
         </Component>
