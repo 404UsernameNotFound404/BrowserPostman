@@ -39,7 +39,10 @@ function MainContent(props: Props) {
             let options = {
                 method: activeRequestValues.type,
                 headers: {...activeRequestValues.headers, 
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    "Accept": "*/*",
+                    "Accept-Encoding": "gzip, deflate, br",
+                    "Connection": "keep-alive"
                 },
                 body: JSON.stringify(activeRequestValues.body),
             }
