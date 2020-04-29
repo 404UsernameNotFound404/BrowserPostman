@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { AppContext } from '../../../Context/AppContext';
 import Model from './Model';
@@ -54,7 +54,12 @@ type Props = {
 function ModelMenu(props: Props) {
     const [modalOpen, setModalOpen] = useState(false);
     const [activeModel, setActiveModel] = useState(null as any);
+    const [tempModelName, setTempModelName] = useState("");
     const c = useContext(AppContext);
+
+    useEffect(() => {
+        if (!!activeModel) setTempModelName(activeModel.name);
+    }, [activeModel])
 
     const addModelToBodyOrHeader = (copyToBody: boolean, modelName: string) => {
         c.folders = c.folders.map(ele => {
@@ -76,16 +81,27 @@ function ModelMenu(props: Props) {
         c.setModels(c.models);
     }
 
-    const editModel = (name: string) => {
+    const editModel = (newValue: any) => {
+        c.models = c.models.map(ele => {
+            if (ele.name == activeModel.name) {
+                ele.attributes = newValue;
+            }
+            return ele;
+        })
+        // setActiveModel({ ...activeModel, name: e.target.value });
+        c.setModels(c.models);
+    }
+
+    const startEditingModel = (name: string) => {
         setActiveModel(c.models.find(ele => ele.name == name));
         setModalOpen(true);
     }
 
-    const editModelTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const editModelTitle = () => {
         //double check for dupes
         c.models = c.models.map(ele => {
             if (ele.name == activeModel.name) {
-                let newName = e.target.value;
+                let newName = tempModelName;
                 let newNameCount = 1;
                 while(!!(c.models.find(ele => ele.name == newName))) {
                     newName = "name" + "(" + newNameCount + ")";
@@ -95,8 +111,8 @@ function ModelMenu(props: Props) {
             }
             return ele;
         })
+        // setActiveModel({ ...activeModel, name: e.target.value });
         c.setModels(c.models);
-        setActiveModel({ ...activeModel, name: e.target.value });
     }
 
     const addNewPropertyOnModel = () => {
@@ -140,7 +156,7 @@ function ModelMenu(props: Props) {
         <Component>
             <Title>Model Menu</Title>
             {
-                c.models.map(ele => <Model addModelToBodyOrHeader = {addModelToBodyOrHeader} edit={editModel} name={ele.name} deleteFunc={deleteModel} copy={addModelToBodyOrHeader} />)
+                c.models.map(ele => <Model addModelToBodyOrHeader = {addModelToBodyOrHeader} edit={startEditingModel} name={ele.name} deleteFunc={deleteModel} copy={addModelToBodyOrHeader} />)
             }
             <Icon onClick = {addModel} color={"green"}>+</Icon>
             <ContactModal darkTheme={true} close={modalOpen} setClose={setModalOpen}>
@@ -148,7 +164,7 @@ function ModelMenu(props: Props) {
                     activeModel != null ?
                         <>
                             <div style={{ height: "1em" }} />    {/* spacer */}
-                            <ModelTitleInput value={activeModel.name} onChange={editModelTitle} />
+                            <ModelTitleInput value={tempModelName} onBlur = {editModelTitle} onChange={(e: any) => {setTempModelName(e.target.value)}} />
                             <JSONInput data={activeModel.attributes} edit={editModel} addNewProperty={addNewPropertyOnModel} deleteProperty={deletePropertyOnModel} />
                             <div style={{ height: "1em" }} />    {/* spacer */}
                         </>

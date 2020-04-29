@@ -49,6 +49,7 @@ function JSONInput(props: Props) {
                 oldObj[oldKey] = newValue;
             }
         }
+        console.log(oldObj)
         props.edit(oldObj);
     }
     

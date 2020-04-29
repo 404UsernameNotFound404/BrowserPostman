@@ -6,6 +6,7 @@ const Component = styled.div`
     width: 100%;
     margin: 0 2.5%;
     display: flex;
+    font-size: 1rem;
 `;
 
 type KeyProps = {
@@ -19,18 +20,19 @@ const Key = styled.input<KeyProps>`
     background-color: transparent;
     border: none;
     color: white;
-    font-size: 1.5rem;
+    font-size: 1rem;
     min-width: 20px;
     width: ${p => p.widthOfInput};
 `;
 
 const Value = styled.input<KeyProps>`
      margin: auto 0;
+    margin-left: 0.2em;
     /* margin-right: 0.5em; */
     background-color: transparent;
     border: none;
     color: white;
-    font-size: 1.5rem;
+    font-size: 1rem;
     min-width: 20px;
     width: ${p => p.widthOfInput};
 `;
@@ -74,10 +76,13 @@ function JSONSingleLineInput(props: Props) {
     useEffect(() => {
         setTempKeyValue(props.objKey);
         if (typeof props.value == "boolean") {
-            console.log("happ with the bool")
             setTempValue(props.value ? "true" : "false")
         } else {
-            setTempValue('"' + props.value + '"');
+            console.log(props.value[0])
+            console.log(props.value[props.value.length - 1])
+            if (!(props.value[0] == '"' && props.value[props.value.length - 1] == '"')) {
+                setTempValue('"' + props.value + '"');
+            } else  setTempValue(props.value);
         }
     }, [props.objKey, props.value])
 
@@ -91,7 +96,7 @@ function JSONSingleLineInput(props: Props) {
         //the ts ignore because typescript is dumb and can't see it's in a if statement this boils my blood if your are not going to run the code you better be damn sure it's not write give a warning if you think it might be null F:ASD[as;d a;lsdasd]
         if (ghostText != null && ghostText.current != undefined && ghostText.current != null) {
             //@ts-ignore
-            ghostText.current.style.fontSize = "1.5rem";
+            ghostText.current.style.fontSize = "1rem";
             //@ts-ignore
             ghostText.current.innerHTML = isKey ? tempKeyValue : tempValue;
             //@ts-ignore
@@ -106,7 +111,10 @@ function JSONSingleLineInput(props: Props) {
 
     const updateValue = (e: React.ChangeEvent<HTMLInputElement>) => {
         //some logic for num/true and false
-        props.edit(true, tempValue, props.objKey)
+        let finalValue = tempValue;
+        if (finalValue[0] == '"') finalValue = finalValue.substring(1, finalValue.length - 1);
+        if (finalValue[finalValue.length - 1] == '"') finalValue = finalValue.substring(0, finalValue.length);
+        props.edit(true, finalValue, props.objKey)
     }
 
     const updateTempKey = (e: React.ChangeEvent<HTMLInputElement>) => {setTempKeyValue(e.target.value)};

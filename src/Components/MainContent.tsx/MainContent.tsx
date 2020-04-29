@@ -35,19 +35,17 @@ function MainContent(props: Props) {
 
     const sendRequest = async () => {
         try {
+            console.log(activeRequestValues.body)
             let options = {
                 method: activeRequestValues.type,
-                headers: activeRequestValues.headers,
+                headers: {...activeRequestValues.headers, 
+                    "Content-Type": "application/json"
+                },
                 body: JSON.stringify(activeRequestValues.body),
             }
-            if (activeRequestValues.type.toLowerCase() == "get") {
-                delete options.body;
-            }
-            console.log(activeRequestValues)
-            console.log(options)
+            // if (activeRequestValues.type.toLowerCase() == "get") delete options.body;
             const resRaw = await fetch(activeRequestValues.url, options)
             let res = await resRaw.json();
-            console.log(res)
             setReqResult(res);
         } catch (err) {
             console.log("errr")

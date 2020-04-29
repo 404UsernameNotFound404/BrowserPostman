@@ -4,7 +4,7 @@ import JSONInput from '../../Library/JSONInput/JSONInput';
 import { AppContext } from '../../../Context/AppContext';
 
 const Component = styled.div`
-    width: 45%;
+    width: 100%;
     margin: 0 2.5%;
 `;
 

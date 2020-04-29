@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { AppContext } from './Context/AppContext';
 import { useState } from 'react';
 import LeftSideBar from './Components/LeftSideBar/LeftSideBar';
 import MainContent from './Components/MainContent.tsx/MainContent';
 import Cookie from 'js-cookie'
+import useInterval from '@use-it/interval';
 
 const AppStyle = styled.div`
   width: 100%;
@@ -45,9 +46,8 @@ function App() {
         studentID: "string"
       }
     }]);
-  const [shouldUpdateFolders, setShouldUpdateFolders] = useState(false);
-  const [shouldUpdateModels, setShouldUpdateModels] = useState(false);
-
+  const [doneGettingCokkies, setDoneGettingCookies] = useState(false);
+  const [saveIntervale, setSaveInterval] = useState(null);
 
   useEffect(() => {
     let cookieFolders = Cookie.get("folders");
@@ -56,49 +56,14 @@ function App() {
     if (!!cookieFolders) setFolders(JSON.parse(cookieFolders));
     if (!!cookieModels) setModels(JSON.parse(cookieModels));
 
-    //starts update cycle
-    setShouldUpdateFolders(true);
-    setShouldUpdateModels(true);
-    updateModels();
-    updateFolders();
+    setDoneGettingCookies(true);
   }, []);
 
-  useEffect(() => {
-    //updates immediately when change is made, but when another change is made within 1 seconds
-    //it waits till end of 1 seconds to incorporate change. Then that cycle will repeat
-    updateFolders();
-  }, [folders])
-
-  useEffect(() => {
-    //same as for folders
-    updateModels();
-  }, [models])
-
-  const updateFolders = () => {
-    if (shouldUpdateFolders) {
-      setShouldUpdateFolders(false);
-      setTimeout(() => {
-        setShouldUpdateFolders(true);
-        Cookie.set('folders', JSON.stringify(getNewFolders()));
-      }, 1000)
-      Cookie.set('folders', JSON.stringify(folders));
-    }
-  }
-
-  const updateModels = () => {
-    if (shouldUpdateModels) {
-      setShouldUpdateFolders(false);
-      setTimeout(() => {
-        setShouldUpdateModels(true);
-        Cookie.set('models', JSON.stringify(getNewModels()));
-      }, 1000)
-      Cookie.set('models', JSON.stringify(models));
-    }
-  }
-
-  //this is because in react a passed in function takes the state at the time it passed in. And I want updated state
-  const getNewFolders = () => folders;
-  const getNewModels = () => models;
+  
+  useInterval(() => {
+    Cookie.set('folders', JSON.stringify(folders));
+    Cookie.set('models', JSON.stringify(models));
+  }, 1000)
 
   return (
     <div>
