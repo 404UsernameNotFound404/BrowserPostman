@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { RequestMenuContext } from '../../../Context/RequestMenuContext';
 
@@ -18,6 +18,7 @@ const URL = styled.h3`
     margin: auto;
     border-right: thin solid white;
     padding: 0.5em 0;
+    margin-left: 0.5em;
 
     text-overflow: ellipsis;
     /* Required for text-overflow to do anything */
@@ -65,10 +66,29 @@ type Props = {
 }
 
 function RequestMenuItem(props: Props) {
+    const [formattedURL, setFormattedURL] = useState("");
     const c = useContext(RequestMenuContext);
+
+    useEffect(() => {
+        formatURL();
+    }, [props.url])
+
+    const formatURL = () => {
+        let startOfRoute = -1;
+        for (let x = props.url.length - 1;x >= 0; x--) {
+            if (props.url[x] == "/") {
+                startOfRoute = x;
+            }
+            if (props.url[x] == "." || props.url[x] == ":") {
+                break;
+            }
+        }
+        if (startOfRoute == -1) setFormattedURL(props.url);
+        setFormattedURL(props.url.substring(startOfRoute, props.url.length));
+    }
     return (
         <Component active = {props.active}>
-            <URL onClick = {() => {c.changeActiveRequest(props.id)}}>{props.url}</URL>
+            <URL onClick = {() => {c.changeActiveRequest(props.id)}}>{formattedURL}</URL>
             <Type onClick = {() => {c.changeActiveRequest(props.id)}}>{props.type}</Type>
             <Icon onClick = {() => {props.deleteReq(props.id)}} color = "red">-</Icon>
         </Component>

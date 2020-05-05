@@ -39,9 +39,16 @@ function URLInput() {
         setTempValue(e.target.value)
     }
 
+    const checkForEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        console.log(e.keyCode)
+        if (e.keyCode == 13) {
+            cMainContent.sendRequest();
+        }
+    }
+
     return (
         <>
-        <Component value = {tempValue} onChange = {updateURL} />
+            <Component onKeyDown = {checkForEnter} value = {tempValue} onChange = {updateURL} />
         </>
     )
 }

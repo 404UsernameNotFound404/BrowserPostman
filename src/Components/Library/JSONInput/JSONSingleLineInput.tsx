@@ -63,29 +63,15 @@ const Icon = styled.h4<IconProps>`
 
 type Props = {
     objKey: string,
-    value: any,
-    edit: any,
-    deleteProperty: Function
+    value: any, 
+    editKey: Function,
+    editValue: Function,
+    deleteProperty: Function,
+    id: number
 }
 
 function JSONSingleLineInput(props: Props) {
-    const [tempKeyValue, setTempKeyValue] = useState("");
-    const [tempValue, setTempValue] = useState("");
     const [reset, setReset] = useState(true);
-
-    useEffect(() => {
-        setTempKeyValue(props.objKey);
-        if (typeof props.value == "boolean") {
-            setTempValue(props.value ? "true" : "false")
-        } else {
-            console.log(props.value[0])
-            console.log(props.value[props.value.length - 1])
-            if (!(props.value[0] == '"' && props.value[props.value.length - 1] == '"')) {
-                setTempValue('"' + props.value + '"');
-            } else  setTempValue(props.value);
-        }
-    }, [props.objKey, props.value])
-
     const ghostText = useRef(null);
 
     useEffect(() => {
@@ -98,37 +84,31 @@ function JSONSingleLineInput(props: Props) {
             //@ts-ignore
             ghostText.current.style.fontSize = "1rem";
             //@ts-ignore
-            ghostText.current.innerHTML = isKey ? tempKeyValue : tempValue;
+            ghostText.current.innerHTML = isKey ? props.objKey : props.value;
             //@ts-ignore
             return (ghostText.current.clientWidth + 4) + "px";
         } 
         return "0px"
     }
-    
-    const updateKey = (e: React.ChangeEvent<HTMLInputElement>) => {
-        props.edit(false, tempKeyValue, props.objKey)
-    }
 
-    const updateValue = (e: React.ChangeEvent<HTMLInputElement>) => {
-        //some logic for num/true and false
-        let finalValue = tempValue;
-        if (finalValue[0] == '"') finalValue = finalValue.substring(1, finalValue.length - 1);
-        if (finalValue[finalValue.length - 1] == '"') finalValue = finalValue.substring(0, finalValue.length);
-        props.edit(true, finalValue, props.objKey)
-    }
+    const updateTempKey = (e: React.ChangeEvent<HTMLInputElement>) => {
+        props.editKey(props.id, e.target.value);
+    };
 
-    const updateTempKey = (e: React.ChangeEvent<HTMLInputElement>) => {setTempKeyValue(e.target.value)};
+    const updateTempValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+        props.editValue(props.id, e.target.value);
+    };
 
-    const updateTempValue = (e: React.ChangeEvent<HTMLInputElement>) => {setTempValue(e.target.value)};
+
 
     return (
         <Component>
             <div style = {{overflow: 'none'}}>
                 <GhostText ref={ghostText}></GhostText>
             </div>
-            "<Key onChange = {updateTempKey} onBlur = {updateKey} widthOfInput={calcWidth(true)} value={tempKeyValue} />"
+            "<Key onChange = {updateTempKey} widthOfInput={calcWidth(true)} value={props.objKey} />"
             :
-            <Value onBlur = {updateValue} widthOfInput = {calcWidth(false)} value = {tempValue} onChange = {updateTempValue} />
+            <Value widthOfInput = {calcWidth(false)} value = {props.value} onChange = {updateTempValue} />
             <Icon onClick = {() => {props.deleteProperty(props.objKey)}} color = "red">-</Icon>
         </Component>
     )

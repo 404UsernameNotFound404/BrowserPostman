@@ -47,7 +47,6 @@ function App() {
       }
     }]);
   const [doneGettingCokkies, setDoneGettingCookies] = useState(false);
-  const [saveIntervale, setSaveInterval] = useState(null);
 
   useEffect(() => {
     let cookieFolders = Cookie.get("folders");

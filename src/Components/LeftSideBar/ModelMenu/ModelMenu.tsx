@@ -97,33 +97,27 @@ function ModelMenu(props: Props) {
         setModalOpen(true);
     }
 
-    const editModelTitle = () => {
-        //double check for dupes
+    const editModelTitle = (value: string) => {
         c.models = c.models.map(ele => {
             if (ele.name == activeModel.name) {
-                let newName = tempModelName;
-                let newNameCount = 1;
-                while(!!(c.models.find(ele => ele.name == newName))) {
-                    newName = "name" + "(" + newNameCount + ")";
-                    newNameCount++;
-                }
-                ele.name = newName;
+                ele.name = value;
             }
             return ele;
         })
-        // setActiveModel({ ...activeModel, name: e.target.value });
         c.setModels(c.models);
+        setTempModelName(value);
     }
 
-    const addNewPropertyOnModel = () => {
-        c.models = c.models.map(ele => {
-            if (ele.name == activeModel.name) {
-                console.log("trying to add")
-                if (ele.attributes.key != undefined) ele.attributes.key = "value";
-                else ele.attributes["key" + Math.floor(Math.random() * 100)] = "value";
-            }
-            return ele;
-        })
+    const addNewPropertyOnModel = (newObject: any) => {
+        // c.models = c.models.map(ele => {
+        //     if (ele.name == activeModel.name) {
+        //         console.log("trying to add")
+        //         if (ele.attributes.key != undefined) ele.attributes.key = "value";
+        //         else ele.attributes["key" + Math.floor(Math.random() * 100)] = "value";
+        //     }
+        //     return ele;
+        // })
+        c.models = {...c.models, ...newObject}
         c.setModels(c.models);
     }
 
@@ -164,7 +158,7 @@ function ModelMenu(props: Props) {
                     activeModel != null ?
                         <>
                             <div style={{ height: "1em" }} />    {/* spacer */}
-                            <ModelTitleInput value={tempModelName} onBlur = {editModelTitle} onChange={(e: any) => {setTempModelName(e.target.value)}} />
+                            <ModelTitleInput value={tempModelName} onChange={(e: any) => {editModelTitle(e.target.value)}} />
                             <JSONInput data={activeModel.attributes} edit={editModel} addNewProperty={addNewPropertyOnModel} deleteProperty={deletePropertyOnModel} />
                             <div style={{ height: "1em" }} />    {/* spacer */}
                         </>
