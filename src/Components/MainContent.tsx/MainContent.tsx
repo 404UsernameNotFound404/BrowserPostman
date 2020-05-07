@@ -35,10 +35,25 @@ function MainContent(props: Props) {
 
     const sendRequest = async () => {
         try {
+            if (typeof activeRequestValues.body == "object") {
+                Object.entries(activeRequestValues.body).map(ele => {
+                    if (typeof ele[1] == "string" && ((ele[1][0] == '"' && ele[1][ele[1].length - 1] == '"') || (ele[1][0] == "'" && ele[1][ele[1].length - 1] == "'"))) {
+                        //@ts-ignore
+                        activeRequestValues.body[ele[0]] = ele[1].substring(1, ele[1].length - 1);
+                        return;
+                    }
+                    //@ts-ignore
+                    if (ele[1] == "true" || ele[1] == "false") activeRequestValues.body[ele[0]] = (ele[1] == "true")
+                    //@ts-ignore
+                    if (!isNaN(ele[1] as any)) activeRequestValues.body[ele[0]] = parseFloat(ele[1]);
+                })
+            }
             console.log(activeRequestValues.body)
+            // console.log(activeRequestValues.body)
             let options = {
                 method: activeRequestValues.type,
-                headers: {...activeRequestValues.headers, 
+                headers: {
+                    ...activeRequestValues.headers,
                     "Content-Type": "application/json",
                     "Accept": "*/*",
                     "Accept-Encoding": "gzip, deflate, br",

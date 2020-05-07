@@ -130,7 +130,7 @@ function JSONInput(props: Props) {
                 {"}"}
             </Content>
         </Component>
-    )
+    );
 }
 
 export default JSONInput;
